@@ -44,13 +44,13 @@ The system is designed around a **source-agnostic data pipeline**: whether a job
 ## 2. System Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                          CLIENTS                            │
-│                                                             │
-│  Authority Dashboard     Contractor Dashboard   Citizen App │
-│  (React + Vite + TS)     (React + Vite + TS)   (future)    │
-│         │                        │                  │       │
-└─────────┼────────────────────────┼──────────────────┼───────┘
+┌──────────────────────────────────────────────────────────────┐
+│                          CLIENTS                             │
+│                                                              │
+│  Authority Dashboard     Contractor Dashboard   Citizen App  │
+│  (React + Vite + TS)     (React + Vite + TS)   (React Native)│
+│         │                        │                  │        │
+└─────────┼────────────────────────┼──────────────────┼────────┘
           │   JWT Bearer Token     │                  │
           ▼                        ▼                  ▼
 ┌─────────────────────────────────────────────────────────────┐
@@ -72,7 +72,7 @@ The system is designed around a **source-agnostic data pipeline**: whether a job
 
 | Decision | Rationale |
 |---|---|
-| Single shared backend | Both dashboards and the future Citizen App hit the same API — no separate BFF layers |
+| Single shared backend | Both dashboards and the Citizen App hit the same API — no separate BFF layers |
 | Source-agnostic job pipeline | The `source` field on Job is stored but never branched on in controller logic |
 | Cloudinary for media | Images are streamed from multer memory storage directly to Cloudinary — nothing written to disk |
 | JWT authentication | All routes except `/api/auth/*` require a valid Bearer token; role is embedded in the token |
@@ -154,13 +154,9 @@ The web portal used by contractors to find and complete work.
 - Mark assigned jobs as complete with GPS capture and photo proof
 - Track bid statuses (PENDING / ACCEPTED / REJECTED)
 
-### 4.3 Citizen App (Future)
+### 4.3 Citizen App 
 
-Not yet integrated. The backend is already structured to accept:
-- `POST /api/complaints` — citizen-submitted complaints
-- `POST /api/jobs` with `source: "CITIZEN"` — direct job creation
-
-No backend changes are required when this app is built. The `source` field is stored for reference but never used in conditional logic.
+```Write Description```
 
 ---
 
@@ -538,51 +534,7 @@ When a Job has a `complaintId`, the linked Complaint's status is automatically u
 
 ---
 
-## 14. Testing Strategy
-
-### Backend Tests (Jest + Supertest + fast-check)
-Uses `mongodb-memory-server` for in-memory MongoDB — no real database needed for tests.
-
-**Property-Based Tests (100+ iterations each):**
-| Property | What it tests |
-|---|---|
-| Source-agnostic job creation | ADMIN and CITIZEN source produce identical document shapes |
-| Job schema defaults | Omitted fields always get correct defaults |
-| Bid always starts PENDING | Any valid bid payload → status: PENDING |
-| Assignment bid exclusivity | After assign: exactly 1 ACCEPTED, all others REJECTED |
-| Complaint status sync | Job status change → linked complaint status updates |
-| Completion proof persistence | All 4 completion fields persisted on COMPLETED |
-| Protected route 401 enforcement | Any protected route without token → 401 |
-| Demo job flags | Any demo creation → isDemoJob: true, status: OPEN |
-| Complaint round-trip | All submitted fields preserved with status: RECEIVED |
-
-### Frontend Tests (Vitest + Testing Library + fast-check)
-**Property-Based Tests:**
-| Property | What it tests |
-|---|---|
-| Map skips missing-location jobs | No runtime error, correct marker count |
-| Marker color mapping | getMarkerColor returns correct hex for all severity/status combos |
-| Popup description truncation | Descriptions > 80 chars are truncated in popup HTML |
-| Analytics count derivation | All 4 stat counts correctly derived from job arrays |
-| Form validation blocks API calls | Missing required fields → no API call, error shown |
-| Status badge rendering | All 4 status values render a visible badge |
-
-### Integration Tests
-- Full job lifecycle: create → bid → assign → complete (all status transitions + complaint sync)
-- Image upload: real image buffer → Cloudinary URL returned
-- Marker clustering: `leaflet.markercluster` loaded, markers added to cluster group
-
-### Smoke Tests
-- All protected routes return 401 without a token
-- Auth routes accessible without token
-- MongoDB connects via `process.env.MONGO_URI`
-- Multer uses `memoryStorage()` (no disk writes)
-- No `if (source === "ADMIN")` or `if (source === "CITIZEN")` branches in jobController.js
-- No hardcoded data arrays in production code paths
-
----
-
-## 15. Project Structure
+## 14. Project Structure
 
 ```
 fixmycity/
@@ -647,7 +599,7 @@ fixmycity/
 
 ---
 
-## 16. Environment Variables
+## 15. Environment Variables
 
 ### Backend (`backend/.env`)
 ```env
@@ -662,7 +614,7 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 ---
 
-## 17. Getting Started
+## 16. Getting Started
 
 ### Prerequisites
 - Node.js 18+
@@ -719,5 +671,5 @@ npm test
 - **Graceful degradation**: Missing location data, API failures, and GPS denial are all handled without crashing the UI.
 - **Property-based testing**: Core invariants (bid exclusivity, status sync, color mapping, analytics derivation) are verified with 100+ randomized iterations using fast-check.
 =======
-# FixMyCity - Team hashinclaude
+# FixMyCity - Team fullsnack
 
