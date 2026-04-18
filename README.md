@@ -12,7 +12,7 @@
 4. [Applications](#4-applications)
    - [Authority Dashboard](#41-authority-dashboard)
    - [Contractor Dashboard](#42-contractor-dashboard)
-   - [Citizen App (Future)](#43-citizen-app-future)
+   - [Citizen App](#43-citizen-app-future)
 5. [Core Workflow](#5-core-workflow)
 6. [Features](#6-features)
 7. [Data Models](#7-data-models)
@@ -22,10 +22,8 @@
 11. [Image Uploads](#11-image-uploads)
 12. [Demo Mode](#12-demo-mode)
 13. [Status Lifecycles](#13-status-lifecycles)
-14. [Testing Strategy](#14-testing-strategy)
-15. [Project Structure](#15-project-structure)
-16. [Environment Variables](#16-environment-variables)
-17. [Getting Started](#17-getting-started)
+14. [Environment Variables](#14-environment-variables)
+15. [Getting Started](#15-getting-started)
 
 ---
 
@@ -571,17 +569,6 @@ cd fixmycity-authority-portal-main/FixMyCity-authority-portal-main
 npm install
 npm run dev
 # App runs on http://localhost:5173
-```
-
-### Running Tests
-```bash
-# Backend tests
-cd backend
-npm test
-
-# Frontend tests
-cd fixmycity-authority-portal-main/FixMyCity-authority-portal-main
-npm test
 ```
 
 ### First-Time Setup
